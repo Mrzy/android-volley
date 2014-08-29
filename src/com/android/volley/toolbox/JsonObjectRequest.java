@@ -22,10 +22,12 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * A request for retrieving a {@link JSONObject} response body at a given URL, allowing for an
@@ -64,11 +66,9 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
             String jsonString =
-                new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                new String(response.data, Charset.forName(HTTP.UTF_8));
             return Response.success(new JSONObject(jsonString),
                     HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
         } catch (JSONException je) {
             return Response.error(new ParseError(je));
         }
