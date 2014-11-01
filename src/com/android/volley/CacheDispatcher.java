@@ -20,6 +20,7 @@ import android.os.Process;
 
 import java.util.concurrent.BlockingQueue;
 
+
 /**
  * Provides a thread for performing cache triage on a queue of requests.
  *
@@ -58,7 +59,7 @@ public class CacheDispatcher extends Thread {
      * @param delivery Delivery interface to use for posting responses
      */
     public CacheDispatcher(
-            BlockingQueue<Request<?>> cacheQueue, BlockingQueue<Request<?>> networkQueue,
+    		BlockingQueue<Request<?>> cacheQueue, BlockingQueue<Request<?>> networkQueue,
             Cache cache, ResponseDelivery delivery) {
         mCacheQueue = cacheQueue;
         mNetworkQueue = networkQueue;

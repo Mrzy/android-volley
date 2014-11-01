@@ -16,6 +16,8 @@
 
 package com.android.volley;
 
+import com.android.volley.error.VolleyError;
+
 /**
  * Encapsulates a parsed response for delivery.
  *
@@ -36,6 +38,14 @@ public class Response<T> {
          * provided error code and optional user-readable message.
          */
         public void onErrorResponse(VolleyError error);
+    }
+    
+    /** Callback interface for delivering the progress of the responses. */
+    public interface ProgressListener {
+    	/**
+         * Callback method thats called on each byte transfer.
+         */
+    	void onProgress(long transferredBytes, long totalSize);
     }
 
     /** Returns a successful response containing the parsed result. */

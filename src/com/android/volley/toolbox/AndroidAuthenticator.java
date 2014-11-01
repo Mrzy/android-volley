@@ -16,7 +16,7 @@
 
 package com.android.volley.toolbox;
 
-import com.android.volley.AuthFailureError;
+import com.android.volley.error.AuthFailureError;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -67,11 +67,12 @@ public class AndroidAuthenticator implements Authenticator {
         return mAccount;
     }
 
-    // TODO: Figure out what to do about notifyAuthFailure
     @SuppressWarnings("deprecation")
-    @Override
+	@Override
     public String getAuthToken() throws AuthFailureError {
         final AccountManager accountManager = AccountManager.get(mContext);
+        
+        //TODO:use new method
         AccountManagerFuture<Bundle> future = accountManager.getAuthToken(mAccount,
                 mAuthTokenType, mNotifyAuthFailure, null, null);
         Bundle result;

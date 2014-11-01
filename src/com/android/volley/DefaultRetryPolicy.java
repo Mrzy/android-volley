@@ -16,6 +16,8 @@
 
 package com.android.volley;
 
+import com.android.volley.error.VolleyError;
+
 /**
  * Default retry policy for requests.
  */
@@ -33,7 +35,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
     private final float mBackoffMultiplier;
 
     /** The default socket timeout in milliseconds */
-    public static final int DEFAULT_TIMEOUT_MS = 2500;
+    public static final int DEFAULT_TIMEOUT_MS = 30000; //2500
 
     /** The default number of retries */
     public static final int DEFAULT_MAX_RETRIES = 1;

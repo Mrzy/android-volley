@@ -21,6 +21,9 @@ import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Process;
 
+import com.android.volley.error.VolleyError;
+import com.android.volley.misc.Utils;
+
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -69,20 +72,20 @@ public class NetworkDispatcher extends Thread {
         mQuit = true;
         interrupt();
     }
-
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void addTrafficStatsTag(Request<?> request) {
-        // Tag the request (if API >= 14)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
-        }
-    }
+    
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	private void addTrafficStatsTag(Request<?> request) {
+		// Tag the request (if API >= 14)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
+		}
+	}
 
     @Override
     public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        Request<?> request;
         while (true) {
+            Request<?> request;
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
@@ -106,16 +109,23 @@ public class NetworkDispatcher extends Thread {
 
                 addTrafficStatsTag(request);
 
-                // Perform the network request.
-                NetworkResponse networkResponse = mNetwork.performRequest(request);
-                request.addMarker("network-http-complete");
+                //Not Local images
+                NetworkResponse networkResponse;
+				if (!Utils.isSpecialType(request.getUrl())){
+	                // Perform the network request.
+					networkResponse = mNetwork.performRequest(request);
+	                request.addMarker("network-http-complete");
 
-                // If the server returned 304 AND we delivered a response already,
-                // we're done -- don't deliver a second identical response.
-                if (networkResponse.notModified && request.hasHadResponseDelivered()) {
-                    request.finish("not-modified");
-                    continue;
-                }
+	                // If the server returned 304 AND we delivered a response already,
+	                // we're done -- don't deliver a second identical response.
+	                if (networkResponse.notModified && request.hasHadResponseDelivered()) {
+	                    request.finish("not-modified");
+	                    continue;
+	                }
+				}
+				else{
+					networkResponse = new NetworkResponse(0, null, null, false);
+				}
 
                 // Parse the response here on the worker thread.
                 Response<?> response = request.parseNetworkResponse(networkResponse);
