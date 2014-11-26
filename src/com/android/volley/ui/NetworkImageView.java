@@ -260,7 +260,6 @@ public class NetworkImageView extends AnimateImageView {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             setImageBitmap(bitmap);
-                            setImageDrawable(null);
                             animate()
                                     .alpha(1f)
                                     .scaleY(1f)
